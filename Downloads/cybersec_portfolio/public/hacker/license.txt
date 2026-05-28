@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cyber dragon chair
+* source:	https://sketchfab.com/3d-models/cyber-dragon-chair-654a9f87039341ada4a875b64083669f
+* author:	3DWorkbench (https://sketchfab.com/3DWorkbench)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cyber dragon chair" (https://sketchfab.com/3d-models/cyber-dragon-chair-654a9f87039341ada4a875b64083669f) by 3DWorkbench (https://sketchfab.com/3DWorkbench) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
