@@ -1,8 +1,5 @@
 import {
-    mobile,
     backend,
-    creator,
-    web,
     javascript,
     typescript,
     html,
@@ -29,6 +26,15 @@ import {
     papersagebot,
     woo,
     ai_workflow,
+    SecurityResearcher,
+    SmartContractAuditor,
+    OffensiveTool,
+    griffin_cabal_weekly_1,
+    griffin_cabal_weekly_2,
+    griffin_cabal_weekly_3,
+    CyberSecuritySpaces,
+    WebDevTutoring,
+    OrochiTraining,
 } from "../assets";
 
 
@@ -43,6 +49,10 @@ export const navLinks = [
         title: "Work",
     },
     {
+        id: "events",
+        title: "Events",
+    },
+    {
         id: "contact",
         title: "Contact",
     },
@@ -51,11 +61,11 @@ export const navLinks = [
 const services = [
     {
         title: "Security Researcher",
-        icon: web,
+        icon: SecurityResearcher,
     },
     {
         title: "Smart Contract Auditor",
-        icon: mobile,
+        icon: SmartContractAuditor,
     },
     {
         title: "Fullstack Developer",
@@ -63,7 +73,7 @@ const services = [
     },
     {
         title: "Offensive Tool Builder",
-        icon: creator,
+        icon: OffensiveTool,
     },
 ];
 
@@ -340,4 +350,60 @@ const projects = [
     },
 ];
 
-export { services, technologies, experiences, testimonials, projects };
+const events = [
+    {
+        title: "Weekly Security Discussions",
+        role: "Initiator & Host",
+        company: "Griffin Cabal",
+        description: "Leading deep dives into active security research, vulnerability disclosure processes, and security tooling design.",
+        points: [
+            "Discussing zero-day vulnerabilities, OWASP Top 10 web vulnerabilities, and defensive mitigation strategies.",
+            "Analyzing offensive security techniques, proof-of-concepts, and red-teaming scenarios.",
+            "Reviewing smart contract auditing methodologies, logic bugs, and reentrancy vectors in Web3 protocols.",
+            "Analyzing keylogger designs, remote command and control frameworks, and network packet analysis."
+        ],
+        images: [griffin_cabal_weekly_1, griffin_cabal_weekly_2, griffin_cabal_weekly_3]
+    },
+    {
+        title: "Weekly X Spaces on Security",
+        role: "Host & Moderator",
+        company: "Griffin Cabal",
+        description: "Hosting and facilitating weekly live audio spaces on X (formerly Twitter) discussing breaking security incidents, career paths, and technical frameworks.",
+        points: [
+            "Coordinating panel discussions with security professionals, lead smart contract auditors, and Web3 developers.",
+            "Analyzing live security incidents, high-profile hacks, and post-mortem breakdown of vulnerabilities.",
+            "Answering community questions on smart contract auditing, bug bounties, and offensive security tooling.",
+            "Educating the community on basic cyber hygiene, secure wallet management, and common phish vectors."
+        ],
+        images: [CyberSecuritySpaces]
+    },
+    {
+        title: "Web Development Bootcamp",
+        role: "Technical Educator",
+        company: "Slaty",
+        description: "Mentoring and tutoring entry-level developers in frontend and fullstack technologies, guiding them from basic concepts to deployed products.",
+        points: [
+            "Leading training sessions on HTML5, CSS3, ES6 JavaScript, and responsive design systems.",
+            "Tutoring React.js ecosystem patterns (state management, component lifecycles, and hooks).",
+            "Simplifying complex web layouts, styling frameworks (Tailwind CSS, Sass), and API integration.",
+            "Reviewing student code repositories, resolving build blockers, and guiding deployment onto Vercel/Netlify."
+        ],
+        images: [WebDevTutoring]
+    },
+    {
+        title: "Orochi Network Onboarding & Training",
+        role: "Regional Ambassador & Host",
+        company: "Orochi Network",
+        description: "Hosted local onboarding workshops and technical training sessions to educate developers on Zero-Knowledge cryptography and the Orochi ONPROVER SDK.",
+        points: [
+            "Conducting developer training on integrating Orochi's cryptographic and secure randomness primitives.",
+            "Leading workshops explaining the mechanics of ZK-SNARKs and zero-knowledge proofs in modern Web3 architecture.",
+            "Onboarding developers into the Orochi ecosystem, providing documentation guides and developer console tours.",
+            "Organizing interactive community events blending cybersecurity, zero-knowledge, and developer tooling."
+        ],
+        images: [OrochiTraining]
+    }
+];
+
+export { services, technologies, experiences, testimonials, projects, events };
+
