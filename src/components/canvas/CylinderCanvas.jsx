@@ -9,8 +9,8 @@ const NUM_INSTANCES = 20;
 const RADIUS = 6.0;
 const PLANE_WIDTH = 6.0;
 const PLANE_HEIGHT = 2.7;
-const PLANE_SEGMENTS_X = 40;
-const PLANE_SEGMENTS_Y = 20;
+const PLANE_SEGMENTS_X = 20;
+const PLANE_SEGMENTS_Y = 1;
 const IMAGES_PER_TURN = 7;
 const SPIRAL_STEP = 0.8;
 
@@ -141,16 +141,6 @@ const fragmentShader = `
   float getLuma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
   mat2 rotate2d(float angle) { return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
 
-  vec3 ditherSampleColor(vec2 cellCenterUV, float cellSize) {
-    vec2 d = vec2(1.0 / 64.0) * cellSize * 0.25;
-    vec3 c1 = texture2D(uAtlas, getTileUV(cellCenterUV)).rgb;
-    vec3 c2 = texture2D(uAtlas, getTileUV(cellCenterUV + vec2(d.x, d.y))).rgb;
-    vec3 c3 = texture2D(uAtlas, getTileUV(cellCenterUV + vec2(-d.x, d.y))).rgb;
-    vec3 c4 = texture2D(uAtlas, getTileUV(cellCenterUV + vec2(d.x, -d.y))).rgb;
-    vec3 c5 = texture2D(uAtlas, getTileUV(cellCenterUV + vec2(-d.x, -d.y))).rgb;
-    return (c1 + c2 + c3 + c4 + c5) / 5.0;
-  }
-
   vec4 applyDither(vec2 localUV) {
     float aspect = uDitherAspect;
     vec2 pixelUV = localUV;
@@ -158,59 +148,39 @@ const fragmentShader = `
 
     float cellsCountY = 1.0 / (uDitherCellSize / 100.0);
     vec2 currentCellIndex = floor(pixelUV * cellsCountY);
+    vec2 cellCenter = (currentCellIndex + 0.5) / cellsCountY;
 
-    float globalMinDist = 100.0;
-    float maxPriority = -1.0;
-    vec3 finalShapeColor = vec3(0.0);
-    float aa = 2.0 / (uDitherCellSize / 100.0 * 100.0);
+    vec2 cellCenterUV = cellCenter;
+    cellCenterUV.x /= aspect;
+    cellCenterUV = clamp(cellCenterUV, 0.0, 1.0);
 
-    for (float y = -2.0; y <= 2.0; y++) {
-      for (float x = -2.0; x <= 2.0; x++) {
-        vec2 neighborIndex = currentCellIndex + vec2(x, y);
-        vec2 neighborCenterUV = (neighborIndex + 0.5) / cellsCountY;
-        neighborCenterUV.x /= aspect;
+    vec3 col = texture2D(uAtlas, getTileUV(cellCenterUV)).rgb;
 
-        if (neighborCenterUV.x < 0.0 || neighborCenterUV.x > 1.0 ||
-            neighborCenterUV.y < 0.0 || neighborCenterUV.y > 1.0) continue;
+    float contrastFactor = (1.015 * (uDitherContrast + 1.0)) / (1.0 * (1.015 - uDitherContrast));
+    col = clamp(contrastFactor * (col - 0.5) + 0.5, 0.0, 1.0);
 
-        vec3 col = ditherSampleColor(neighborCenterUV, uDitherCellSize / 100.0);
+    float luma = getLuma(col);
 
-        float contrastFactor = (1.015 * (uDitherContrast + 1.0)) / (1.0 * (1.015 - uDitherContrast));
-        col = clamp(contrastFactor * (col - 0.5) + 0.5, 0.0, 1.0);
+    float scaleX = uDitherBaseScale;
+    float scaleY = uDitherBaseScale;
 
-        float luma = getLuma(col);
-
-        float scaleX = uDitherBaseScale;
-        float scaleY = uDitherBaseScale;
-
-        if (uDitherMode == 2) {
-          scaleX = scaleY = (1.0 - luma) * uDitherBaseScale * 1.5;
-        }
-
-        vec2 cellCenter = (neighborIndex + 0.5) / cellsCountY;
-        vec2 p = pixelUV - cellCenter;
-        p *= cellsCountY;
-
-        float gapFactor = 1.0 - (uDitherGap / uDitherCellSize);
-        if (scaleX < 0.001 || scaleY < 0.001) continue;
-        float effSize = 0.5 * gapFactor;
-
-        float d = 1.0;
-        if (uDitherShape == 0) d = sdCircle(p, effSize * scaleX);
-        else if (uDitherShape == 1) d = sdBox(p, vec2(effSize * scaleX, effSize * scaleY));
-
-        globalMinDist = min(globalMinDist, d);
-
-        if (d < aa) {
-          if (luma > maxPriority) {
-            maxPriority = luma;
-            finalShapeColor = (uDitherUseColor == 1) ? col : uDitherFgColor;
-          }
-        }
-      }
+    if (uDitherMode == 2) {
+      scaleX = scaleY = (1.0 - luma) * uDitherBaseScale * 1.5;
     }
 
-    float mask = 1.0 - smoothstep(0.0, aa, globalMinDist);
+    vec2 p = pixelUV - cellCenter;
+    p *= cellsCountY;
+
+    float gapFactor = 1.0 - (uDitherGap / uDitherCellSize);
+    float effSize = 0.5 * gapFactor;
+
+    float d = 1.0;
+    if (uDitherShape == 0) d = sdCircle(p, effSize * scaleX);
+    else if (uDitherShape == 1) d = sdBox(p, vec2(effSize * scaleX, effSize * scaleY));
+
+    float aa = 2.0 / (uDitherCellSize / 100.0 * 100.0);
+    float mask = 1.0 - smoothstep(0.0, aa, d);
+    vec3 finalShapeColor = (uDitherUseColor == 1) ? col : uDitherFgColor;
     vec3 result = mix(uDitherBgColor, finalShapeColor, mask);
     return vec4(result, mask);
   }
@@ -250,31 +220,31 @@ const fragmentShader = `
     float borderMask = outerEdge - innerEdge;
     borderMask = clamp(borderMask, 0.0, 1.0);
 
-    float caStrength = uChromaticAberration * (0.3 + 0.7 * (1.0 - vDepthFade));
-    if (uMode == 0) {
-      caStrength *= (1.0 - vActive * 0.85);
-    } else {
-      caStrength *= 0.35;
-    }
-    vec2 caOffset = vec2(caStrength, 0.0);
-
-    vec2 uvCenter = getTileUV(vUv);
-    vec2 uvR = getTileUV(vUv + caOffset);
-    vec2 uvB = getTileUV(vUv - caOffset);
-
-    float r = texture2D(uAtlas, uvR).r;
-    float g = texture2D(uAtlas, uvCenter).g;
-    float b = texture2D(uAtlas, uvB).b;
-
-    vec3 color = vec3(r, g, b);
-
+    vec3 color;
     float ditherAlpha = 1.0;
-    if (uMode == 0) {
-      if (uDitherEnabled == 1) {
-        vec4 dithered = applyDither(vUv);
-        color = dithered.rgb;
-        ditherAlpha = dithered.a;
+
+    if (uMode == 0 && uDitherEnabled == 1) {
+      vec4 dithered = applyDither(vUv);
+      color = dithered.rgb;
+      ditherAlpha = dithered.a;
+    } else {
+      float caStrength = uChromaticAberration * (0.3 + 0.7 * (1.0 - vDepthFade));
+      if (uMode == 0) {
+        caStrength *= (1.0 - vActive * 0.85);
+      } else {
+        caStrength *= 0.35;
       }
+      vec2 caOffset = vec2(caStrength, 0.0);
+
+      vec2 uvCenter = getTileUV(vUv);
+      vec2 uvR = getTileUV(vUv + caOffset);
+      vec2 uvB = getTileUV(vUv - caOffset);
+
+      float r = texture2D(uAtlas, uvR).r;
+      float g = texture2D(uAtlas, uvCenter).g;
+      float b = texture2D(uAtlas, uvB).b;
+
+      color = vec3(r, g, b);
     }
 
     float lum = getLuma(color);
@@ -357,15 +327,9 @@ function useTextureAtlas(images) {
     const canvasW = cols * (tileW + padding);
     const canvasH = rows * (tileH + padding);
 
-    const canvas =
-      typeof OffscreenCanvas !== "undefined"
-        ? new OffscreenCanvas(canvasW, canvasH)
-        : document.createElement("canvas");
-
-    if ("width" in canvas) {
-      canvas.width = canvasW;
-      canvas.height = canvasH;
-    }
+    const canvas = document.createElement("canvas");
+    canvas.width = canvasW;
+    canvas.height = canvasH;
 
     const ctx = canvas.getContext("2d");
     if (ctx) {
@@ -701,6 +665,15 @@ function CylindricalGallery({
 // Parent Three.js Canvas Container
 export default function CylinderCanvas({ images, onActiveEventChange, mode }) {
   const containerRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1024px)");
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const scrollOffset = useRef(0);
   const scrollVelocity = useRef(0);
@@ -828,15 +801,17 @@ export default function CylinderCanvas({ images, onActiveEventChange, mode }) {
           onActiveIndexChange={handleActiveIndexChange}
           mode={mode}
         />
-        <EffectComposer disableNormalPass>
-          <Bloom
-            intensity={1.0}
-            luminanceThreshold={0.01}
-            luminanceSmoothing={0.45}
-            mipmapBlur={true}
-            radius={0.65}
-          />
-        </EffectComposer>
+        {!isMobile && (
+          <EffectComposer disableNormalPass>
+            <Bloom
+              intensity={1.0}
+              luminanceThreshold={0.01}
+              luminanceSmoothing={0.45}
+              mipmapBlur={true}
+              radius={0.65}
+            />
+          </EffectComposer>
+        )}
       </>
     );
   };
@@ -853,6 +828,7 @@ export default function CylinderCanvas({ images, onActiveEventChange, mode }) {
       <Canvas
         camera={{ fov: 75, position: [0, 0, 10.5] }}
         gl={{ antialias: true, alpha: true }}
+        dpr={[1, isMobile ? 1 : 1.5]}
       >
         <ambientLight intensity={0.5} />
         <SceneContent />

@@ -8,6 +8,8 @@ import Works from './Works';
 import Events from './Events';
 import Feedbacks from './Feedbacks';
 import Contact from './Contact';
+import Events3DPage from './Events3DPage';
+import ScrollToTop from './ScrollToTop';
 
 export {
   Hero,
@@ -22,5 +24,7 @@ export {
   EarthCanvas, 
   BallCanvas, 
   ComputersCanvas, 
-  StarsCanvas
+  StarsCanvas,
+  Events3DPage,
+  ScrollToTop
 }

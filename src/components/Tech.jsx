@@ -9,7 +9,7 @@ const Tech = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 500px)");
+    const mq = window.matchMedia("(max-width: 1024px)");
     setIsMobile(mq.matches);
     const handler = (e) => setIsMobile(e.matches);
     mq.addEventListener("change", handler);

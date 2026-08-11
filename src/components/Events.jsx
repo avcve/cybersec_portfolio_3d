@@ -1,48 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { styles } from "../styles";
 import { SectionWrapper } from "../hoc";
 import { events } from "../constants";
-import CylinderCanvas from "./canvas/CylinderCanvas";
-import {
-  griffin_cabal_weekly_1,
-  griffin_cabal_weekly_2,
-  griffin_cabal_weekly_3,
-  CyberSecuritySpaces,
-  WebDevTutoring,
-  OrochiTraining
-} from "../assets";
-
-// Build the array of 20 images to populate the 3D instanced mesh cylinder
-const galleryImages = [
-  griffin_cabal_weekly_1,
-  griffin_cabal_weekly_2,
-  griffin_cabal_weekly_3,
-  CyberSecuritySpaces,
-  WebDevTutoring,
-  OrochiTraining,
-  
-  griffin_cabal_weekly_1,
-  griffin_cabal_weekly_2,
-  griffin_cabal_weekly_3,
-  CyberSecuritySpaces,
-  WebDevTutoring,
-  OrochiTraining,
-  
-  griffin_cabal_weekly_1,
-  griffin_cabal_weekly_2,
-  griffin_cabal_weekly_3,
-  CyberSecuritySpaces,
-  WebDevTutoring,
-  OrochiTraining,
-  
-  griffin_cabal_weekly_1,
-  griffin_cabal_weekly_2
-];
 
 const Events = () => {
   const [activeEventIndex, setActiveEventIndex] = useState(0);
-  const [galleryMode, setGalleryMode] = useState("cybersec");
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
 
   const activeEvent = events[activeEventIndex];
 
@@ -53,6 +18,20 @@ const Events = () => {
   const handlePrev = () => {
     setActiveEventIndex((prev) => (prev - 1 + events.length) % events.length);
   };
+
+  // Reset activeImgIndex when activeEventIndex changes
+  useEffect(() => {
+    setActiveImgIndex(0);
+  }, [activeEventIndex]);
+
+  // Slideshow auto-rotation for multi-image events
+  useEffect(() => {
+    if (activeEvent.images.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveImgIndex((prev) => (prev + 1) % activeEvent.images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [activeEvent]);
 
   return (
     <>
@@ -65,12 +44,8 @@ const Events = () => {
         {/* Left Side: Dynamic Event Information Card */}
         <div className="flex flex-col justify-between bg-black-200/40 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-card relative overflow-hidden transition-colors duration-500">
           {/* Subtle neon glowing ambient background */}
-          <div className={`absolute -top-24 -left-24 w-48 h-48 rounded-full transition-all duration-700 blur-[80px] ${
-            galleryMode === "cybersec" ? "bg-[#6df4ce] opacity-5" : "bg-purple-500 opacity-10"
-          }`} />
-          <div className={`absolute -bottom-24 -right-24 w-48 h-48 rounded-full transition-all duration-700 blur-[80px] ${
-            galleryMode === "cybersec" ? "bg-purple-500 opacity-5" : "bg-blue-500 opacity-10"
-          }`} />
+          <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full transition-all duration-700 blur-[80px] bg-[#6df4ce] opacity-5" />
+          <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full transition-all duration-700 blur-[80px] bg-purple-500 opacity-5" />
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -83,11 +58,7 @@ const Events = () => {
             >
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                  <span className={`font-mono text-[13px] uppercase tracking-wider font-semibold px-3 py-1 rounded-full border transition-all duration-500 ${
-                    galleryMode === "cybersec"
-                      ? "text-[#6df4ce] bg-[#6df4ce]/10 border-[#6df4ce]/20"
-                      : "text-purple-300 bg-purple-500/10 border-purple-500/20 shadow-[0_0_10px_rgba(168,85,247,0.1)]"
-                  }`}>
+                  <span className="font-mono text-[13px] uppercase tracking-wider font-semibold px-3 py-1 rounded-full border text-[#6df4ce] bg-[#6df4ce]/10 border-[#6df4ce]/20">
                     {activeEvent.company}
                   </span>
                   <span className="text-secondary font-mono text-[13px] uppercase tracking-wider">
@@ -109,9 +80,7 @@ const Events = () => {
                       key={`point-${index}`}
                       className="text-white-100 text-[14px] leading-[22px] flex items-start gap-2"
                     >
-                      <span className={`mt-[6px] text-[10px] transition-colors duration-500 ${
-                        galleryMode === "cybersec" ? "text-[#6df4ce]" : "text-purple-400"
-                      }`}>■</span>
+                      <span className="mt-[6px] text-[10px] text-[#6df4ce]">■</span>
                       <span>{point}</span>
                     </li>
                   ))}
@@ -124,9 +93,7 @@ const Events = () => {
           <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/5">
             <button
               onClick={handlePrev}
-              className={`w-10 h-10 rounded-full border border-white/10 flex justify-center items-center text-white hover:bg-white/5 transition-all duration-300 active:scale-95 ${
-                galleryMode === "cybersec" ? "hover:border-[#6df4ce]/50 hover:text-[#6df4ce]" : "hover:border-purple-500/50 hover:text-purple-300"
-              }`}
+              className="w-10 h-10 rounded-full border border-white/10 flex justify-center items-center text-white hover:bg-white/5 transition-all duration-300 active:scale-95 hover:border-[#6df4ce]/50 hover:text-[#6df4ce]"
               aria-label="Previous event"
             >
               ←
@@ -136,9 +103,7 @@ const Events = () => {
             </span>
             <button
               onClick={handleNext}
-              className={`w-10 h-10 rounded-full border border-white/10 flex justify-center items-center text-white hover:bg-white/5 transition-all duration-300 active:scale-95 ${
-                galleryMode === "cybersec" ? "hover:border-[#6df4ce]/50 hover:text-[#6df4ce]" : "hover:border-purple-500/50 hover:text-purple-300"
-              }`}
+              className="w-10 h-10 rounded-full border border-white/10 flex justify-center items-center text-white hover:bg-white/5 transition-all duration-300 active:scale-95 hover:border-[#6df4ce]/50 hover:text-[#6df4ce]"
               aria-label="Next event"
             >
               →
@@ -146,42 +111,50 @@ const Events = () => {
           </div>
         </div>
 
-        {/* Right Side: Interactive 3D Cylindrical Gallery */}
-        <div className="h-[400px] sm:h-[500px] lg:h-auto w-full bg-black-100/20 rounded-2xl border border-white/5 relative overflow-hidden flex items-center justify-center">
-          
-          {/* Cybersec / Media Mode Switcher Overlay */}
-          <div className="absolute top-4 right-4 z-10 flex items-center bg-black/60 border border-white/10 backdrop-blur-md rounded-full p-1 select-none font-mono text-[9px] sm:text-[10px] uppercase tracking-wider shadow-lg">
-            <button
-              type="button"
-              onClick={() => setGalleryMode("cybersec")}
-              className={`px-2.5 py-1 rounded-full transition-all duration-300 flex items-center gap-1.5 ${
-                galleryMode === "cybersec"
-                  ? "bg-[#6df4ce]/20 text-[#6df4ce] border border-[#6df4ce]/30 shadow-[0_0_10px_rgba(109,244,206,0.2)]"
-                  : "text-secondary hover:text-white border border-transparent"
-              }`}
-            >
-              <span className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${galleryMode === "cybersec" ? "bg-[#6df4ce] animate-pulse" : "bg-gray-600"}`} />
-              Cybersec
-            </button>
-            <button
-              type="button"
-              onClick={() => setGalleryMode("media")}
-              className={`px-2.5 py-1 rounded-full transition-all duration-300 flex items-center gap-1.5 ${
-                galleryMode === "media"
-                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
-                  : "text-secondary hover:text-white border border-transparent"
-              }`}
-            >
-              <span className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${galleryMode === "media" ? "bg-purple-400 animate-pulse" : "bg-gray-600"}`} />
-              Media
-            </button>
+        {/* Right Side: Premium 2D Visual Summary Card */}
+        <div className="flex flex-col justify-between bg-black-200/40 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-card relative overflow-hidden h-[450px] sm:h-[500px] lg:h-auto">
+          {/* Glowing neon bg gradient */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full blur-[100px] bg-gradient-to-tr from-[#6df4ce] to-[#bf61ff] opacity-10 pointer-events-none" />
+
+          {/* Event Preview Image Slide */}
+          <div className="relative flex-1 w-full rounded-xl overflow-hidden border border-white/5 group bg-black/40 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={`${activeEventIndex}-${activeImgIndex}`}
+                src={activeEvent.images[activeImgIndex]}
+                alt={`${activeEvent.title} preview`}
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.02 }}
+                transition={{ duration: 0.4 }}
+              />
+            </AnimatePresence>
+
+            {/* Slideshow dot indicators if there are multiple images */}
+            {activeEvent.images.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                {activeEvent.images.map((_, idx) => (
+                  <button
+                    key={`dot-${idx}`}
+                    onClick={() => setActiveImgIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      idx === activeImgIndex ? "bg-[#6df4ce] w-4" : "bg-white/40"
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
-          <CylinderCanvas
-            images={galleryImages}
-            onActiveEventChange={setActiveEventIndex}
-            mode={galleryMode}
-          />
+          {/* Premium Call to Action */}
+          <Link
+            to="/events"
+            className="w-full mt-6 py-4 px-6 rounded-xl font-mono text-[13px] uppercase tracking-wider text-center font-bold bg-transparent text-[#6df4ce] border border-[#6df4ce]/30 hover:border-[#6df4ce] hover:bg-[#6df4ce]/10 shadow-[0_0_15px_rgba(109,244,206,0.1)] hover:shadow-[0_0_25px_rgba(109,244,206,0.25)] active:scale-[0.98] transition-all duration-300 block"
+          >
+            Explore Interactive 3D Gallery →
+          </Link>
         </div>
       </div>
     </>
