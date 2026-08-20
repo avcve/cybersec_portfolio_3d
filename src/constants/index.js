@@ -405,5 +405,7 @@ const events = [
     }
 ];
 
-export { services, technologies, experiences, testimonials, projects, events };
+const blogUrl = "https://avcve.github.io/0xreaper-blog/";
+
+export { services, technologies, experiences, testimonials, projects, events, blogUrl };
 

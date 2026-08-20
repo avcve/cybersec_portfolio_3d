@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Glowing shadow around the pen for high contrast and modern look -->
+  <g transform="translate(2, 2) rotate(-45)">
+    <path d="M 0,0 L 0,28" stroke="rgba(128, 77, 238, 0.4)" stroke-width="6" stroke-linecap="round" filter="url(#shadow-glow)" />
+  </g>
+
+  <!-- The Fountain Pen -->
+  <g transform="translate(2, 2) rotate(-45)">
+    <!-- 1. The Nib (Metal tip, dual-tone gold and silver) -->
+    <!-- Outer Nib: Polished Silver -->
+    <path d="M 0,0 C -0.8,2 -2.5,5 -2.5,8 L 2.5,8 C 2.5,5 0.8,2 0,0 Z" fill="url(#silverGrad)" stroke="#aaaaaa" stroke-width="0.3" />
+    <!-- Inner Gold Plating -->
+    <path d="M 0,1.2 C -0.5,2.7 -1.6,5 -1.6,8 L 1.6,8 C 1.6,5 0.5,2.7 0,1.2 Z" fill="url(#goldGrad)" />
+    <!-- Nib Slit and Breather Hole -->
+    <line x1="0" y1="0" x2="0" y2="5.5" stroke="#1a1a1a" stroke-width="0.5" />
+    <circle cx="0" cy="5.5" r="0.55" fill="#1a1a1a" />
+
+    <!-- 2. Grip Section (Gunmetal) -->
+    <path d="M -2.5,8 L -2,12.5 L 2,12.5 L 2.5,8 Z" fill="url(#gripGrad)" stroke="#1a1a1a" stroke-width="0.3" />
+
+    <!-- 3. Accent Gold Ring -->
+    <path d="M -2.1,12.5 L -2.2,13.5 L 2.2,13.5 L 2.1,12.5 Z" fill="url(#goldGrad)" />
+
+    <!-- 4. Pen Barrel (Glassy Purple with Cylindrical 3D Specular Highlight) -->
+    <path d="M -2.2,13.5 C -2.5,18 -2.4,22 -1.6,26.5 L 1.6,26.5 C 2.4,22 2.5,18 2.2,13.5 Z" fill="url(#purpleBarrelGrad)" stroke="#2b1461" stroke-width="0.4" />
+
+    <!-- 5. End Cap (Gold trim) -->
+    <path d="M -1.6,26.5 L -1.2,28.5 L 1.2,28.5 L 1.6,26.5 Z" fill="url(#goldGrad)" stroke="#443311" stroke-width="0.3" />
+  </g>
+
+  <defs>
+    <!-- Filter for soft purple shadow glow -->
+    <filter id="shadow-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.5" />
+    </filter>
+
+    <!-- Silver/Chrome Gradient -->
+    <linearGradient id="silverGrad" x1="-2.5" y1="4" x2="2.5" y2="4" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#777777" />
+      <stop offset="25%" stop-color="#cccccc" />
+      <stop offset="55%" stop-color="#ffffff" />
+      <stop offset="85%" stop-color="#bbbbbb" />
+      <stop offset="100%" stop-color="#666666" />
+    </linearGradient>
+
+    <!-- Gold Gradient -->
+    <linearGradient id="goldGrad" x1="-2.2" y1="13" x2="2.2" y2="13" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#b8860b" />
+      <stop offset="25%" stop-color="#e5c158" />
+      <stop offset="55%" stop-color="#fff5bd" />
+      <stop offset="85%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#aa7c11" />
+    </linearGradient>
+
+    <!-- Grip (Gunmetal) Gradient -->
+    <linearGradient id="gripGrad" x1="-2.5" y1="10" x2="2.5" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1c1c1c" />
+      <stop offset="30%" stop-color="#444444" />
+      <stop offset="60%" stop-color="#666666" />
+      <stop offset="85%" stop-color="#333333" />
+      <stop offset="100%" stop-color="#151515" />
+    </linearGradient>
+
+    <!-- Glassy Purple Barrel Gradient (Matches blog's #804dee purple with 3D cylinder highlight) -->
+    <linearGradient id="purpleBarrelGrad" x1="-2.5" y1="20" x2="2.5" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2d1460" />
+      <stop offset="25%" stop-color="#552aa6" />
+      <stop offset="55%" stop-color="#cbb5ff" />
+      <stop offset="75%" stop-color="#804dee" />
+      <stop offset="100%" stop-color="#1b0840" />
+    </linearGradient>
+  </defs>
+</svg>

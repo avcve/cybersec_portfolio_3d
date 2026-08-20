@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { About, Contact, Experience, Events, Feedbacks, Hero, Navbar, Tech, Works, StarsCanvas, Events3DPage, ScrollToTop } from "./components";
+import { About, Contact, Experience, Events, Feedbacks, Hero, Navbar, Tech, Works, Blog, StarsCanvas, Events3DPage, ScrollToTop } from "./components";
 
 const MainLayout = () => {
   return (
@@ -11,6 +11,7 @@ const MainLayout = () => {
       <About />
       <Experience />
       <Tech />
+      <Blog />
       <Works />
       <Events />
       <Feedbacks />
